@@ -59,6 +59,6 @@ multiplica x y = x * y
 funcionLoca :: a -> a -> b -> b
 funcionLoca x y z = z
 
-sirveAlargandoUnPoco:: Int -> Bool
-sirveAlargandoUnPoco = 
-    sirveCable . alargarUnPoco
+--sirveAlargandoUnPoco:: Int -> Bool
+--sirveAlargandoUnPoco = 
+   -- sirveCable . alargarUnPoco
