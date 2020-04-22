@@ -1,9 +1,9 @@
 -- Trabajo Prácrico 1: Commerce - Paradigmas de Programacion
--- Fecha de entrega: 13/4
+-- Fecha de entrega: ??/04
 -- Hecho por Martín Caruso
 
-productoCorriente :: String -> Bool --Funciona
-productoCorriente nombre 
+productoCorriente :: String -> Bool 
+productoCorriente nombre  
     | head nombre == 'A' || head nombre == 'a' = True
     | head nombre == 'E' || head nombre == 'e' = True
     | head nombre == 'I' || head nombre == 'i' = True
@@ -11,7 +11,7 @@ productoCorriente nombre
     | head nombre == 'U' || head nombre == 'u' = True
     | otherwise = False
 
-productoXL :: String -> String --Funciona
+productoXL :: String -> String 
 productoXL nombre = nombre ++ " XL"
   
 productoCodiciado :: String -> Bool 
@@ -40,15 +40,17 @@ aplicarDescuento precio descuento = precio - precio * descuento / 100
 productoDeElite :: String -> Bool
 productoDeElite nombre = productoDeLujo nombre && productoCodiciado nombre && not (productoCorriente nombre)
 
+--Reemplazar Float con Int funciona 
+precioTotal :: Int -> Float -> Float -> Float -> Float
+precioTotal cantidad precio descuento costoEnvio = aplicarCostoEnvio (aplicarDescuento precio descuento * fromIntegral(cantidad)) costoEnvio   
 
---DUDA: Porque no puedo tipar cantidad como Int 
---precioTotal :: Float -> Float -> Float -> Float -> Float
---precioTotal precio cantidad descuento costoEnvio =  aplicarDescuento (precio * cantidad) descuento + costoEnvio 
+--FUNCIONES UTILES (SOLO TIPADAS)
+--take :: Int -> [a] -> [a]
+--drop :: Int -> [a] -> [a]
+--head :: [a] -> a
+--elem :: Eq => a -> [a] -> Bool
+--reverse :: [a] -> [a]
+--[a] se refiere a listas, como String o una lista de numeros
 
-
---ESTAN MAL TIPADAD CREO
---take :: Int -> String -> String
---drop :: Int -> String -> String
---head :: String -> Char
---elem :: Char -> String -> Bool 
---reverse :: a -> a
+--DUDAS
+--  Es necesario que definamos las funciones del final, o las dejamos como comentarios?
