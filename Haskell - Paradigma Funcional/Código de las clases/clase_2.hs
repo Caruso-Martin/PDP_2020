@@ -7,6 +7,12 @@ signo x
 -- mayorDeEdad/1 es mayor de edad si su edad es mayor o igual a 18
 mayorDeEdad edad = edad >= 18
 
+maxDeDos :: Ord a => a -> a -> a
+maxDeDos x y 
+    | x > y = x
+    | x < y = y
+    | otherwise = y 
+
 -- Tarea: maximo/2 devuelve el mayor de los 2
 -- ejemplos
 -- maximo 1 2  (2)
@@ -38,7 +44,9 @@ otraFuncion _ _ = 10
 
 -- Tarea: factorial/1
 
-
+factorial :: Int -> Int
+factorial 0 = 1
+factorial n =  n * factorial(n - 1) 
 
 -- Tipos que hicimos
 miPi :: Float 
