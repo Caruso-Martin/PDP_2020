@@ -70,3 +70,6 @@ funcionLoca x y z = z
 --sirveAlargandoUnPoco:: Int -> Bool
 --sirveAlargandoUnPoco = 
    -- sirveCable . alargarUnPoco
+
+
+cargarTanque cantidadNafta (p, n, t) = min (n + cantidadNafta) (t) 
