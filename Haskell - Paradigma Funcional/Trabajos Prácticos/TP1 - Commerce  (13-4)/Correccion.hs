@@ -1,72 +1,36 @@
--- Trabajo Prácrico 1: Commerce - Paradigmas de Programacion
+-- Trabajo Práctico 1: Commerce - Paradigmas de Programacion
 -- Hecho por Martín Caruso
 
 type Producto = String
 
--- Recorda lo que vimos en la clase, es redundante devolver True o False según se cumpla o no una condición, retorna directamente la condición
---Un ejemplo boludo de esto puede ser
-
-{-
-esPositivo x 
- |x > 0 = True
- |otherwise = False
-
- en lugar de
-
- esPositivo = (>0)
--}
-
 -- Trata de resolver esto usando composición
-
-productoCorriente :: String -> Bool 
-productoCorriente nombre  
-    | head nombre == 'A' || head nombre == 'a' = True
-    | head nombre == 'E' || head nombre == 'e' = True
-    | head nombre == 'I' || head nombre == 'i' = True
-    | head nombre == 'O' || head nombre == 'o' = True
-    | head nombre == 'U' || head nombre == 'u' = True
-    | otherwise = False
-
-productoCorriente2 :: Producto -> Bool 
-productoCorriente2 nombre  = ((== 'A').head) nombre ||  ((== 'E').head) nombre || ((== 'I').head) nombre ||  ((== 'O').head) nombre || ((== 'U').head) nombre ||  ((== 'a').head) nombre || ((== 'e').head) nombre ||  ((== 'i').head) nombre || ((== 'o').head) nombre ||  ((== 'u').head) nombre
+productoCorriente :: Producto -> Bool 
+productoCorriente nombre  = ((== 'A').head) nombre ||  ((== 'E').head) nombre || ((== 'I').head) nombre ||  ((== 'O').head) nombre || ((== 'U').head) nombre ||  ((== 'a').head) nombre || ((== 'e').head) nombre ||  ((== 'i').head) nombre || ((== 'o').head) nombre ||  ((== 'u').head) nombre
     
-
 -- productoCorriente "Ariel"      -> True
 -- productoCorriente "escuadra"   -> True
 -- productoCorriente "Iman"       -> True
 -- productoCorriente "olla"       -> True
--- productoCorriente "Ukelele     -> True
+-- productoCorriente "Ukelele"    -> True
 -- productoCorriente "Heladera"   -> False
 
-
 --Perfecto!
-productoXL :: String -> String 
+productoXL :: Producto -> Producto --Cambie el tipo
 productoXL nombre = nombre ++ " XL"
-
-productoXL2 :: Producto -> Producto 
-productoXL2 nombre = nombre ++ " XL"
   
 -- productoXL "Heladera"    -> "Heladera XL"
 
 --Intenta resolverlo con una composición
-productoCodiciado :: String -> Bool 
-productoCodiciado nombre = length nombre > 10
-
-productoCodiciado2 :: Producto -> Bool 
-productoCodiciado2 = (> 10).length  
+productoCodiciado :: Producto -> Bool 
+productoCodiciado = (> 10).length  
 
 -- productoCodiciado "Heladera XL"  -> True
 -- productoCodiciado "Heladera"     -> False
 -- productoCodiciado "Heladera Z"   -> False
 
 --Si a take le pasas un número mayor a la longitud del string te retorna todo el string, no es necesario la guarda.
-descodiciarProducto :: String -> String 
-descodiciarProducto nombre 
-    | productoCodiciado nombre = take 10 nombre
-    | otherwise = nombre 
-
-descodiciarProducto2 :: Producto -> Producto 
-descodiciarProducto2 nombre = take 10 nombre
+descodiciarProducto :: Producto -> Producto 
+descodiciarProducto = take 10 
 
 -- descodiciarProducto "Heladera XL"  -> "Heladera X"
 -- descodiciarProducto "Heladera"     -> "Heladera"   
@@ -74,38 +38,29 @@ descodiciarProducto2 nombre = take 10 nombre
 
 
 --Podrías decir que aplicarCostoEnvio es la suma.
-aplicarCostoEnvio :: Float -> Float -> Float
-aplicarCostoEnvio precio costoEnvio = precio + costoEnvio 
-
-aplicarCostoEnvio2 :: Float -> Float -> Float
-aplicarCostoEnvio2 = (+)
+aplicarCostoEnvio :: Num a => a -> a -> a
+aplicarCostoEnvio = (+)
 
 -- aplicarCostoEnvio 10.1 5.2   -> 15.3
 
 --Muy bien!
-entregaSencilla :: String -> Bool
+entregaSencilla :: Producto -> Bool --Cambie el tipo
 entregaSencilla = even.length  
-
-entregaSencilla2 :: Producto -> Bool
-entregaSencilla2 = even.length  
 
 -- entregaSencilla "Heladera XL"  -> False
 -- entregaSencilla "Heladera"     -> True
 -- entregaSencilla "Heladera Z"   -> True
 
 --OK! (aunque no estoy seguro de cual es el orden correcto, pero no importa)
-versionBarata :: String -> String
+versionBarata :: Producto -> Producto --Cambie el tipo
 versionBarata = reverse.descodiciarProducto
-
-versionBarata2 :: Producto -> Producto
-versionBarata2 = reverse.descodiciarProducto
 
 -- versionBarata "Heladera XL"  -> "LX aredaleH"
 -- versionBarata "Heladera"     -> "aredaleH"   
 -- versionBarata "Heladera Z"   -> "Z aredaleH" 
 
 --OK!
-productoDeLujo :: String -> Bool
+productoDeLujo :: Producto -> Bool
 productoDeLujo nombre = elem 'x' nombre || elem 'z' nombre || elem 'X' nombre || elem 'Z' nombre
 
 -- productoDeLujo "Heladera XL"  -> True
@@ -114,17 +69,13 @@ productoDeLujo nombre = elem 'x' nombre || elem 'z' nombre || elem 'X' nombre ||
 
 --OK! (Podes sacar factor común precio, pero no hace falta)
 aplicarDescuento :: Float -> Float -> Float
-aplicarDescuento precio descuento = precio - precio * descuento / 100  
+aplicarDescuento precio descuento = precio * (1 - descuento / 100) 
 
 -- aplicarDescuento 300.0 15.0  -> 255.0
 
 --También podrías hacer una composición entre not y productoCorriente
-productoDeElite :: String -> Bool
-productoDeElite nombre = productoDeLujo nombre && productoCodiciado nombre && not (productoCorriente nombre)
-
-productoDeElite2 :: Producto -> Bool
-productoDeElite2 nombre = productoDeLujo nombre && productoCodiciado nombre && (not.productoCorriente) nombre
-
+productoDeElite :: Producto -> Bool
+productoDeElite nombre = productoDeLujo nombre && productoCodiciado nombre && (not.productoCorriente) nombre
 
 -- productoDeElite "Pad Pro Mini XL"    -> True
 -- productoDeElite "iPad Pro Mini XL"   -> False
@@ -135,9 +86,9 @@ productoDeElite2 nombre = productoDeLujo nombre && productoCodiciado nombre && (
 -- productoDeElite "Sillon verde XL"    -> True
 -- productoDeElite "Sillon verde SL"    -> False
 
---Podes simplificar la variable costoEnvio.
+--Podes simplificar la variable costoEnvio. 
 precioTotal :: Int -> Float -> Float -> Float -> Float
-precioTotal cantidad precio descuento costoEnvio = aplicarCostoEnvio (aplicarDescuento precio descuento * fromIntegral(cantidad)) costoEnvio   
+precioTotal cantidad precio descuento costoEnvio = costoEnvio + aplicarDescuento precio descuento * fromIntegral(cantidad)     
 
 -- precioTotal 10 200.5 15.3 400.99 -> 2099.225
 
@@ -150,9 +101,3 @@ precioTotal cantidad precio descuento costoEnvio = aplicarCostoEnvio (aplicarDes
 --[a] se refiere a listas, como String o una lista de numeros
 
 
-
---No sé si lo vimos antes de que les dieramos el tp, pero en haskell se pueden definir alias de tipos, por ejemplo
-
---type Producto = String
-
---Esto aumenta la expresividad del código y es más útil cuando se tienen tipos más complejos, por ejemplo tuplas.

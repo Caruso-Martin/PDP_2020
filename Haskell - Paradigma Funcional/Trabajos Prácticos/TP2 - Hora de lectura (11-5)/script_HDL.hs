@@ -1,3 +1,5 @@
+-- Trabajo Práctico 1: Hora de Lectura - Paradigmas de Programacion
+-- Hecho por Martín Caruso
 data Libro = Libro {nombre :: String, autor :: String, saga :: String, paginas :: Int, capitulo :: Int} deriving (Show, Eq)
 
 -- Biblioteca
@@ -14,22 +16,25 @@ eragonEldest =          Libro {nombre = "Eldest",               autor = "Christo
 eragonBrisignr =        Libro {nombre = "Brisignr",             autor = "Christopher Paolini",  saga = "Eragon",                paginas = 700,  capitulo = 1} 
 eragonLegado =          Libro {nombre = "Legado",               autor = "Christopher Paolini",  saga = "Eragon",                paginas = 811,  capitulo = 1}
 
---Obtener 3 a 5 en tupla
-trd :: (a, b, c, d, e) -> c
-trd (_, _, c, _, _) = c
-
-forth :: (a, b, c, d, e) -> d
-forth (_, _, _, d, _) = d
-
-fifth :: (a, b, c, d, e) -> e
-fifth (_, _, _, _, e) = e
-
 -- Funciones
 lecturaObligatoria :: Libro -> Bool
-lecturaObligatoria = (== "Stephen King").autor.snd || (== "Eragon").saga.trd || (== "Fundacion").nombre.fst
+lecturaObligatoria libro = (("Stephen King"==).autor) libro || (("Eragon"==).saga) libro || (("Fundacion"==).nombre) libro
+
+-- lecturaObligatoria eragonLegado  -> True
+-- lecturaObligatoria fundacion     -> True
+-- lecturaObligatoria elVisitante   -> True
+-- lecturaObligatoria sandman5      -> False
 
 esFantasioso :: Libro -> Bool
-esFantasioso = (== "Christopher Paolini").autor.snd || (== "Neil Gaiman").autor.snd  
+esFantasioso libro = (("Christopher Paolini"==).autor) libro || (("Neil Gaiman"==).autor) libro
+
+-- esFantasioso eragonBrisignr      -> True
+-- esFantasioso sandman10           -> True
+-- esFantasioso shingekiNoKyojin127 -> False
 
 esLigero :: Libro -> Bool
 esLigero = (<41).paginas
+
+-- esLigero sandman12           -> True
+-- esLigero shingekiNoKyojin1   -> True
+-- esLigero eragonBrisignr      -> False
