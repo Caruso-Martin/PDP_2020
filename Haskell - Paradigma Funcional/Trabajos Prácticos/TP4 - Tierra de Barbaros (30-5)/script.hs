@@ -73,3 +73,4 @@ cuerda objeto1 objeto2 barbaro =
 --cuerda (espadas 30) ardilla dave                              -> Barabaro {nombre = "Dave", fuerza = 160, habilidades = ["tejer","escribirPoesia"], objetos = [<function>,<function>,<function>,<function>]}
 --cuerda varitasDefectuosas (amuletosMisticos "cantar") thor    -> Barabaro {nombre = "Thor", fuerza = 1000, habilidades = ["volar","lanzarMartillo","hacerMagia","cantar"], objetos = [<function>,<function>]}
 --cuerda (amuletosMisticos "cantar") varitasDefectuosas thor    -> Barabaro {nombre = "Thor", fuerza = 1000, habilidades = ["volar","lanzarMartillo","cantar","hacerMagia"], objetos = [<function>]}
+
