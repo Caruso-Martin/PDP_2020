@@ -1,0 +1,119 @@
+import casaPintada.*
+
+describe "Respecto a la pintura" {
+
+	test "Latas necesarias - 251m2" {
+		assert.equals(6, pintureria.latasNecesarias(251, 0))
+	}
+
+	test "Latas necesarias - 250m2" {
+		assert.equals(5, pintureria.latasNecesarias(250, 0))
+	}
+
+	test "Costo - 10m2" {
+		assert.equals(500, pintureria.latasNecesarias(10, 0).costoPorLataPorMenor())
+	}
+
+	test "Costo - 250m2" {
+		assert.equals(2500, pintureria.latasNecesarias(250, 0).costoPorLataPorMenor())
+	}
+
+}
+
+describe "Respecto a los pintores" {
+
+	test "Raul - Costo de mano de obra por 20m2" {
+		assert.equals(1400, raul.costoManoDeObra(20))
+	}
+
+	test "Raul - Costo total por 20m2" {
+		assert.equals(1900, raul.costo(20, 0))
+	}
+
+	test "Carla - Costo total por 25m2" {
+		assert.equals(2250, carla.costo(25, 0))
+	}
+
+	test "Carla - Costo total por 26m2" {
+		assert.equals(1755, carla.costo(26, 0))
+	}
+
+	test "Venancio - Costo de mano de obra por 32m2" {
+		assert.equals(1376, venancio.costoManoDeObra(32))
+	}
+
+	test "Venancio - Costo total por 32m2" {
+		assert.equals(1626, venancio.costo(32, 0))
+	}
+
+}
+
+describe "Respecto a los ambientes" {
+
+	test "Cocina - Superficie" {
+		assert.equals(21, cocina.superficie())
+	}
+
+	test "Habitacion chica - Superficie" {
+		assert.equals(20, habitacionComun.superficie())
+	}
+
+}
+
+describe "Respecto a Aldo" {
+
+	fixture {
+		aldo.ahorros(11000)
+	}
+
+	test "Casa de Aldo - Superficie" {
+		assert.equals(aldo.casa().superficieTotal())
+	}
+
+	test "Aldo - Presupuesto maximo" {
+		assert.equals(2200, aldo.presupuesto())
+	}
+
+	test "Aldo - No puede contratar a Raul" {
+		assert.notThat(aldo.contratarPintor(raul, 0))
+	}
+
+	test "Aldo - Sumar ahorros + Contratar a Raul" {
+		aldo.ahorrar(10000)
+		assert.that(aldo.contratarPintor(raul, 0))
+	}
+
+	test "Aldo - Aumentar precio de lata + Sumar ahorros + Contratar a Raul" {
+		aldo.ahorrar(10000)
+		pintureria.costoPorLataPorMenor(800)
+		assert.that(aldo.contratarPintor(raul, 0))
+	}
+
+	test "Aldo - Sumar ahorros + Contratar a Carla" {
+		aldo.ahorrar(1400)
+		assert.that(aldo.contratarPintor(carla, 0))
+	}
+
+	test "Aldo - Contratar a Venancio" {
+		assert.that(aldo.contratarPintor(venancio, 0))
+	}
+
+}
+
+describe "Respecto a la pintura a granel" {
+
+	test "Costo - 10m2" {
+		assert.equals(60, pintureria.latasNecesarias(10, 1).costo())
+	}
+
+	test "Costo - 11m2" {
+		assert.equals(72, pintureria.latasNecesarias(11, 1).costo())
+	}
+
+	test "Aldo - Sumar ahorros + Contratar a Raul" {
+		aldo.ahorrar(4650)
+		assert.that(aldo.contratarPintor(raul, 1))
+	}
+
+}
+

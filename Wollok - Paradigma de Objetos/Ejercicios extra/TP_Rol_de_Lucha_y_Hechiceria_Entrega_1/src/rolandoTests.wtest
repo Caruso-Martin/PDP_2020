@@ -1,0 +1,129 @@
+import rolando.*
+
+describe "1. Pruebas de hechiceria" {
+	fixture { rolando.hechizoPreferido(espectroMalefico) }
+	test "Rolando - Nivel de hechiceria" {
+		assert.equals(56, rolando.nivelDeHechiceria())
+	}
+	test "Espectro Malefico - Cambiar nombre // Rolando - Nivel de hechiceria" {
+		espectroMalefico.nombreDeHechizo("espectro superrecontramalefico muajajaja")
+		
+		assert.equals("espectro superrecontramalefico muajajaja", espectroMalefico.nombreDeHechizo())
+		assert.equals(125, rolando.nivelDeHechiceria())
+	}
+	test "Rolando - Cambiar hechizo preferido + Nivel de hechiceria" {
+		rolando.hechizoPreferido(hechizoBasico)
+		
+		assert.equals(35, rolando.nivelDeHechiceria())
+	}
+	test "Fuerza oscura - Eclipse // Rolando - Nivel de hechiceria" {
+		fuerzaOscura.eclipse()
+		
+		assert.equals(61, rolando.nivelDeHechiceria())
+	}
+	test "Espectro Malefico - Es poderoso" {
+		assert.that(espectroMalefico.esPoderoso())
+	}
+	test "Espectro Malefico - Cambiar nombre + Es poderoso" {
+		espectroMalefico.nombreDeHechizo("pepe")
+		
+		assert.that(!espectroMalefico.esPoderoso())
+	}
+	test "Hechizo basico - Es poderoso" {
+		assert.that(!hechizoBasico.esPoderoso())
+	}
+}
+describe "2. Pruebas de lucha" {
+	fixture {
+		collarDivino.cantidadDePerlas(5)
+		
+		rolando.hechizoPreferido(espectroMalefico)
+		
+		rolando.agregarArtefacto(espadaDelDestino)
+		rolando.agregarArtefacto(collarDivino)
+		rolando.agregarArtefacto(mascaraOscura)
+	}
+	test "Rolando - Quitar todos los artefactos + Valor de lucha" {
+		rolando.vaciarArtefactos()
+		
+		assert.equals(1, rolando.valorDeLucha())
+	}
+	test "Rolando - Valor de lucha (con todos los artefactos)" {		
+		assert.equals(13, rolando.valorDeLucha())
+	}
+	test "Collar divino - Cambiar cantidad de perlas // Rolando - Valor de lucha (con todos los artefactos)" {
+		collarDivino.cantidadDePerlas(3)
+		assert.equals(11, rolando.valorDeLucha())
+
+	}
+	test "Rolando - Cambiar valor base de lucha + Valor de lucha (con todos los artefactos)" {
+		rolando.valorBaseDeLucha(8)
+		assert.equals(20, rolando.valorDeLucha())
+
+	}
+	test "Fuerza oscura - Eclipse // Mascara oscura - Unidades de lucha" {
+		fuerzaOscura.eclipse()
+		assert.equals(5, mascaraOscura.unidadesDeLucha())
+
+	}
+	test "Rolando - Quitar Mascara oscura + Valor de lucha" {
+		rolando.quitarArtefacto(mascaraOscura)
+		assert.equals(9, rolando.valorDeLucha())
+
+	}
+}
+describe "3. Pruebas de lucha y hechiceria avanzada" {
+	fixture {
+		collarDivino.cantidadDePerlas(5)
+		armadura.refuerzo(sinRefuerzo)
+		
+		rolando.hechizoPreferido(espectroMalefico)
+		
+		rolando.agregarArtefacto(espadaDelDestino)
+		rolando.agregarArtefacto(collarDivino)
+		rolando.agregarArtefacto(mascaraOscura)
+		rolando.agregarArtefacto(armadura)
+		rolando.agregarArtefacto(espejo)
+	}
+	test "Rolando - Esta cargado" {
+		assert.that(rolando.estaCargado())
+	}
+	test "Rolando - Quitar armadura + Esta cargado " {
+		rolando.quitarArtefacto(armadura)
+		assert.notThat(rolando.estaCargado())
+	}
+	test "Rolando - Valor de lucha" {
+		assert.equals(20, rolando.valorDeLucha())
+	}
+	test "Rolando - Agregar bendicion + Valor de lucha" {
+		assert.fail("No se desarrollo la prueba")
+		//armadura.refuerzo(bendicion)
+		assert.equals(58, rolando.valorDeLucha())
+	}
+	test "Armadura - Agregar de cota de malla + Unidades de lucha" {
+		armadura.refuerzo(cotaDeMalla)
+		assert.equals(3, armadura.unidadesDeLucha())
+	}
+	test "Armadura - Agregar hechizo basico + Unidades de lucha" {
+		armadura.refuerzo(hechizoBasico)
+		assert.equals(12, armadura.unidadesDeLucha())
+	}
+	test "Armadura - Agregar espectro malefico + Unidades de lucha" {
+		armadura.refuerzo(espectroMalefico)
+		assert.equals(19, armadura.unidadesDeLucha())
+	}
+	test "Rolando - Vaciar todos los artefactos + Agregar espejo" {
+		assert.fail("No se desarrollo la prueba")
+		rolando.vaciarArtefactos()
+		rolando.agregarArtefacto(espejo)
+		assert.equals(1, rolando.valorDeLucha())
+	}
+	test "Rolando - Agregar libro de hechizos + Nivel de hechiceria" {
+		const libroDeHechiceria = new LibroDeHechizos()
+		libroDeHechiceria.agregarHechizo(hechizoBasico)
+		libroDeHechiceria.agregarHechizo(espectroMalefico)
+		rolando.hechizoPreferido(libroDeHechiceria)
+		
+		assert.equals(56, rolando.nivelDeHechiceria())
+	}
+}

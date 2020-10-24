@@ -1,0 +1,69 @@
+import ejercicio3.*
+
+describe "Sueldo segun categoria" {
+
+	fixture {
+		pepe.diasAusente(2)
+		pepe.bonoPorResultados(bono1)
+	}
+
+	test "Cadete - Sueldo = $1500" {
+		pepe.categoria(cadete)
+		assert.equals(1500, pepe.sueldo())
+	}
+
+	test "Gerente - Sueldo = $1000" {
+		pepe.categoria(gerente)
+		assert.equals(1000, pepe.sueldo())
+	}
+
+}
+
+describe "Sueldo segun ausentismo" {
+
+	fixture {
+		pepe.categoria(gerente)
+		pepe.bonoPorResultados(bono1)
+	}
+
+	test "Ausente 0 dias - Sueldo(gerente) + $100" {
+		pepe.diasAusente(0)
+		assert.equals(1100, pepe.sueldo())
+	}
+
+	test "Ausente 1 dia - Sueldo(gerente) + $50" {
+		pepe.diasAusente(1)
+		assert.equals(1050, pepe.sueldo())
+	}
+
+	test "Ausente 2 dias - Sueldo(gerente) + $0" {
+		pepe.diasAusente(2)
+		assert.equals(1000, pepe.sueldo())
+	}
+
+}
+
+describe "Sueldo segun bono" {
+
+	fixture {
+		pepe.categoria(gerente)
+		pepe.diasAusente(2)
+	}
+
+	test "Bono 1 - Sueldo(gerente) + $0" {
+		pepe.bonoPorResultados(bono1)
+		assert.equals(1000, pepe.sueldo())
+	}
+
+	test "Bono 2 - Sueldo(gerente) + $80" {
+		pepe.bonoPorResultados(bono2)
+		assert.equals(1080, pepe.sueldo())
+	}
+
+	test "Bono 3 - Sueldo(gerente) + 10%" {
+		pepe.bonoPorResultados(bono3)
+		assert.equals(1100, pepe.sueldo())
+	}
+
+}
+

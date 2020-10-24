@@ -1,0 +1,99 @@
+import barrileteCosmico.*
+
+
+
+describe "Tests de Destinos" {
+	
+	const garlicSea = new Destino(nombre = "Garlic's Sea", precio = 2500)
+	const silverSea = new Destino(nombre = "Silver's Sea", precio = 1350)
+	const lastToninas = new Destino(nombre = "Last Toninas", precio = 3500)
+	const goodAirs = new Destino(nombre = "Good Airs", precio = 1500)
+	
+	const pHari = new Usuario(nombreDeUsuario = "PHari", fondosEnCuenta = 1500)
+	
+	fixture {
+		garlicSea.agregarElementoAEquipaje("Caña de pescar")
+		garlicSea.agregarElementoAEquipaje("Piloto")
+		
+		silverSea.agregarElementoAEquipaje("Protector solar")
+		silverSea.agregarElementoAEquipaje("Equipo de buceo")
+		
+		lastToninas.agregarElementoAEquipaje("Vacuna gripal")
+		lastToninas.agregarElementoAEquipaje("Vacuna B")
+		lastToninas.agregarElementoAEquipaje("Necromicon")
+		
+		goodAirs.agregarElementoAEquipaje("Cerveza")
+		goodAirs.agregarElementoAEquipaje("Protector solar")
+		
+		barrileteCosmico.agregarDestino(garlicSea)
+		barrileteCosmico.agregarDestino(silverSea)
+		barrileteCosmico.agregarDestino(lastToninas)
+		barrileteCosmico.agregarDestino(goodAirs)
+		
+		pHari.agregarLugarVisitado(lastToninas)
+		pHari.agregarLugarVisitado(goodAirs)
+	}
+	
+
+
+	test "Obtener destinos importantes" {
+		assert.equals(#{garlicSea, lastToninas}, barrileteCosmico.destinosMasImportantes())
+	}
+
+	test "Last Toninas - Aplicar 25% de descuento (verificar precio)" {
+		barrileteCosmico.aplicarDescuento(25, lastToninas)
+		assert.equals(2625, lastToninas.precio())
+	}
+
+	test "Last Toninas - Aplicar 25% de descuento (verificar equipaje)" {
+		barrileteCosmico.aplicarDescuento(25, lastToninas)
+		assert.that(lastToninas.equipajeImprescindible().any({ elemento => elemento == "Certificado de descuento" }))
+	}
+
+	test "Silver's Sea - Es destino peligroso" {
+		assert.notThat(silverSea.esPeligroso())
+	}
+
+	test "Todos los destinos - Aplicar 15% de descuento (verificar precio y equipaje)" {
+		barrileteCosmico.aplicarDescuentoATodos(15)
+		
+		assert.equals(2125, garlicSea.precio())
+		assert.equals(1147.5, silverSea.precio())
+		assert.equals(2975, lastToninas.precio())
+		assert.equals(1275, goodAirs.precio())
+		
+		assert.that(garlicSea.equipajeImprescindible().any({ elemento => elemento == "Certificado de descuento" }))
+		assert.that(silverSea.equipajeImprescindible().any({ elemento => elemento == "Certificado de descuento" }))
+		assert.that(lastToninas.equipajeImprescindible().any({ elemento => elemento == "Certificado de descuento" }))
+		assert.that(goodAirs.equipajeImprescindible().any({ elemento => elemento == "Certificado de descuento" }))
+	}
+
+	test "Obtener destinos mas peligrosos" {
+		assert.equals(#{lastToninas}, barrileteCosmico.cartaDeDestinos().filter({ destino => destino.esPeligroso() }))
+	}
+
+	test "Barrilete Cosmico - Es empresa extrema" {
+		assert.that(barrileteCosmico.esEmpresaExtrema())
+	}
+
+	test "Barrilete Cosmico - Carta de destinos" {
+		assert.equals(#{garlicSea, silverSea, lastToninas, goodAirs}, barrileteCosmico.cartaDeDestinos())
+	}
+
+
+	test "PHari - Obtener kilometros" {
+		assert.equals(500, pHari.kilometros())
+	}
+
+	test "PHari - Volar hacia Silver's Sea" {
+		pHari.volarADestino(silverSea)
+		assert.that(pHari.lugaresVisitados().any( {lugar => lugar.nombre() == "Silver's Sea"} ))
+	}
+
+	test "PHari - Volar hacia Silver's Sea (fondos restantes)" {
+		pHari.volarADestino(silverSea)
+		assert.equals(150, pHari.fondosEnCuenta())
+	}
+
+}
+

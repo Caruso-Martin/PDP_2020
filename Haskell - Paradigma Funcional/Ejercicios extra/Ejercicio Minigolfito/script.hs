@@ -68,52 +68,88 @@ palos = [putter, madera] ++ map hierro [1..10]
 golpe :: Palo -> Jugador -> Tiro 
 golpe palo = palo.habilidad
 
--- Se podria definir como la funcion id, pero seria muy generica
+golpe' :: Jugador -> Palo -> Tiro 
+golpe' jugador palo = (palo.habilidad) jugador
 
 -- 3. Obstaculos
 
-type Obstaculo = Jugador -> Palo -> Tiro
+type Obstaculo = Tiro -> Bool
 
-superaTunelConRampita :: Jugador -> Palo -> Bool 
-superaTunelConRampita jugador palo =
-    ((>90).precision.golpe palo) jugador && ((==0).altura.golpe palo) jugador
+tunelConRampita :: Obstaculo
+tunelConRampita tiro = 
+    ((>90).precision) tiro && ((==0).altura) tiro 
 
-superaLaguna :: Jugador -> Palo -> Bool  
-superaLaguna jugador palo =
-    ((>80).velocidad.golpe palo) jugador && (between 1 5.altura.golpe palo) jugador
+laguna :: Obstaculo
+laguna tiro = 
+    ((>80).velocidad) tiro && (between 1 5.altura) tiro
 
-superaHoyo :: Jugador -> Palo -> Bool 
-superaHoyo jugador palo =
-    ((>95).precision.golpe palo) jugador && (between 5 20.velocidad.golpe palo) jugador && ((==0).altura.golpe palo) jugador
+hoyo :: Obstaculo
+hoyo tiro = 
+    ((>90).precision) tiro && (between 5 20.velocidad) tiro && ((==0).altura) tiro 
 
-efectoTunelConRampita :: Obstaculo    
-efectoTunelConRampita jugador palo 
-    | superaTunelConRampita jugador palo = UnTiro {velocidad = ((*2).velocidad.golpe palo) jugador, precision = 100, altura = 0}
-    | otherwise = tiroDetenido jugador palo
+--- Como queda un tiro 
 
-efectoLaguna :: Int -> Obstaculo
-efectoLaguna longitudLaguna jugador palo 
-    | superaLaguna jugador palo = UnTiro {velocidad = (velocidad.golpe palo) jugador, precision = (precision.golpe palo) jugador, altura = ((altura.golpe palo) jugador) `div` longitudLaguna}
-    | otherwise = tiroDetenido jugador palo
+tiroDetenido :: Tiro
+tiroDetenido = UnTiro {velocidad = 0, precision = 0, altura = 0}
 
-efectoHoyo :: Obstaculo
-efectoHoyo _ _ = UnTiro {velocidad = 0, precision = 0, altura = 0}
+tiroPostTunel :: Tiro -> Tiro
+tiroPostTunel tiro 
+    | tunelConRampita tiro = UnTiro {velocidad = ((*2).velocidad) tiro, precision = 100, altura = 0}
+    | otherwise = tiroDetenido
 
-tiroDetenido :: Obstaculo
-tiroDetenido = efectoHoyo
+tiroPostLaguna :: Int -> Tiro -> Tiro
+tiroPostLaguna longitudLaguna tiro
+    | laguna tiro = UnTiro {velocidad = velocidad tiro, precision = precision tiro, altura = (altura tiro) `div` longitudLaguna}
+    | otherwise = tiroDetenido
 
--- 4.
+tiroPostHoyo :: Tiro -> Tiro
+tiroPostHoyo _ = tiroDetenido
 
---palosUtiles :: Jugador -> Obstaculo -> [Palo]
---palosUtiles jugador obstaculos = filter (sirveParaSuperar jugador obstaculos) palos
+-- 4. Palos de utilidad
 
--- sirveParaSuperar :: Jugador -> Palo -> Obstaculo -> Bool
-sirveParaSuperar jugador obstaculos palo = golpe jugador palo
+supera :: Obstaculo -> Jugador -> Palo -> Bool
+supera obstaculo jugador palo = 
+    obstaculo (golpe' jugador palo)
 
---obstaculosConsecutivos obstaculos tiro
+palosUtiles :: Jugador -> Obstaculo -> [Palo]
+palosUtiles jugador obstaculo = 
+    filter (supera obstaculo jugador) palos
 
---paloMasUtil jugador obstaculos
+--- superaConsecutivos
+obstaculosA :: [Obstaculo]
+obstaculosA = [laguna, laguna, tunelConRampita, hoyo]
 
--- 5. padrePerdedor
+obstaculosB :: [Obstaculo]
+obstaculosB = [tunelConRampita, tunelConRampita, hoyo, tunelConRampita, laguna, tunelConRampita, laguna, hoyo]
 
---padrePerdedor
+superaUno :: Tiro -> Obstaculo -> Bool
+superaUno tiro obstaculo = obstaculo tiro
+
+superaConsecutivos :: [Obstaculo] -> Tiro -> Int
+superaConsecutivos obstaculos tiro = 
+    length (takeWhile (superaUno tiro) obstaculos)
+
+--- paloMasUtil
+
+paloMasUtil :: Jugador -> [Obstaculo] -> Palo
+paloMasUtil jugador obstaculos = 
+    filter (maximoDeTiros == tirosDelPalo) palos
+    where 
+        maximoDeTiros = maximum (map (superaConsecutivos obstaculos) (map (golpe' jugador) palos)) 
+        tirosDelPalo  =  ((superaConsecutivos obstaculos).(golpe' jugador))
+
+-- 5.
+
+rankingTorneo :: [(Jugador, Puntos)]
+rankingTorneo = [(bart, 30), (todd, 29), (rafa, 1)]
+
+--puntosCampeon :: [(Jugador, Puntos)] -> Int
+--puntosCampeon ranking = maximum (map snd ranking)
+
+padresPerdedores :: [(Jugador, Puntos)] -> [String]
+padresPerdedores ranking = 
+    map padre jugadoresPerdedores
+    where 
+        puntosDelCampeon = maximum (map snd ranking)
+        jugadoresPerdedores = (map fst (filter ((<puntosDelCampeon).snd) ranking))
+     

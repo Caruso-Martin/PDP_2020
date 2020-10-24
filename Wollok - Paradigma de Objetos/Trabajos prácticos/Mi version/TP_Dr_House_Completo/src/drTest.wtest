@@ -1,0 +1,89 @@
+import drHouse.*
+
+describe "Enfermedad infecciosa" {
+
+	const pepe = new Persona(celulasTotales = 10000, temperatura = 36)
+	const malaria = new EnfermedadInfecciosa(celulasAmenazadas = 1000)
+	
+	fixture { pepe.contraer(malaria) }
+
+	test "Efermedad Infecciosa - Producir efecto" {
+		malaria.producirEfecto()
+		assert.equals(37, pepe.temperatura())
+	}
+
+	test "Efermedad Infecciosa - Reproducirse" {
+		malaria.reproducirse()
+		assert.equals(2000, malaria.celulasAmenazadas())
+	}
+
+	test "Efermedad Infecciosa - Es agresiva (<10%)" {
+		malaria.celulasAmenazadas(pepe.celulasTotales() / 10)
+		assert.notThat(malaria.esAgresiva())
+	}
+
+	test "Efermedad Infecciosa - Es agresiva (>10%)" {
+		malaria.celulasAmenazadas(pepe.celulasTotales() / 10 + 1)
+		assert.that(malaria.esAgresiva())
+	}
+
+}
+
+describe "Es agresiva la enfermedad" {
+
+	const pepe = new Persona(celulasTotales = 10000, temperatura = 36)
+	const lupus = new EnfermedadAutoinmune(celulasAmenazadas = 1000)
+	
+	fixture { pepe.contraer(lupus) }
+
+	test "Efermedad Autoinmune - Producir efecto" {
+		lupus.producirEfecto()
+		assert.equals(9000, pepe.celulasTotales())
+	}
+
+	test "Efermedad Autoinmune - Es agresiva (<30 dias)" {
+		30.times(lupus.producirEfecto())
+		assert.notThat(lupus.esAgresiva())
+	}
+
+	test "Efermedad Autoinmune - Es agresiva (>30 dias)" {
+		31.times(lupus.producirEfecto())
+		assert.that(lupus.esAgresiva())
+	}
+
+}
+
+describe "Relacionada a medicacion" {
+	
+	const pepe = new Persona(celulasTotales = 10000, temperatura = 36)
+	const malaria = new EnfermedadInfecciosa(celulasAmenazadas = 1500)
+	const lupus = new EnfermedadAutoinmune(celulasAmenazadas = 1005)
+	
+	fixture { 
+		pepe.contraer(malaria)
+		pepe.contraer(lupus)
+	}
+
+	test "Aplicar medicacion - Caso posible" {
+		lupus.atenuar(10)
+		assert.equals(850, lupus.celulasAmenazadas())
+	}
+
+	test "Aplicar medicacion - Caso no posible" {
+		assert.throwsExceptionWithMessage("No se puede atenuar una enfermedad ya curada", malaria.atenuar(101))
+	}
+
+	test "Enfermedades curadas - Solo 1" {
+		malaria.atenuar(100)
+		assert.equals(1, pepe.enfermedadesNoCuradas().count())
+	}
+
+	test "Enfermedades curadas - Todas" 
+	{
+		malaria.atenuar(100)
+		lupus.atenuar(67)
+		assert.equals(0, pepe.enfermedadesNoCuradas().count())
+	}
+
+}
+
